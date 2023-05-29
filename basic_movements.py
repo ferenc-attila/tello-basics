@@ -26,7 +26,7 @@ while True:
 
     frame_read = drone.get_frame_read()
     my_frame = frame_read.frame
-    drone_stream = cv2.resize(my_frame, (height, width))
+    drone_stream = cv2.resize(my_frame, (width, height))
     cv2.imshow('result', drone_stream)
 
     if is_real_flight & drone.get_battery() >= 10:
