@@ -1,3 +1,5 @@
+import time
+
 from djitellopy import Tello
 import cv2
 
@@ -18,7 +20,6 @@ drone.speed = 0
 
 print(drone.get_battery())
 
-drone.streamoff()
 drone.streamon()
 
 while True:
@@ -26,22 +27,14 @@ while True:
     frame_read = drone.get_frame_read()
     my_frame = frame_read.frame
     drone_stream = cv2.resize(my_frame, (height, width))
-
-    if is_real_flight & drone.get_battery() >= 30:
-        drone.takeoff()
-        drone.move_up(200)
-        drone.move_forward(200)
-        drone.rotate_clockwise(90)
-        drone.move_forward(100)
-        drone.rotate_clockwise(90)
-        drone.move_forward(200)
-        drone.rotate_clockwise(90)
-        drone.move_forward(100)
-        drone.land()
-        break
-
     cv2.imshow('result', drone_stream)
 
+    if is_real_flight & drone.get_battery() >= 10:
+        drone.turn_motor_on()
+        time.sleep(10)
+        drone.turn_motor_off()
+        break
+
     if cv2.waitKey(1) & 0xFF == ord('q'):
-        drone.land()
+        drone.turn_motor_off()
         break
