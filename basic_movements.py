@@ -22,19 +22,18 @@ print(drone.get_battery())
 
 drone.streamon()
 
-while True:
-
+try:
+    drone.set_video_direction(0)
     frame_read = drone.get_frame_read()
     my_frame = frame_read.frame
     drone_stream = cv2.resize(my_frame, (width, height))
     cv2.imshow('result', drone_stream)
-
-    if is_real_flight & drone.get_battery() >= 10:
-        drone.turn_motor_on()
-        time.sleep(10)
-        drone.turn_motor_off()
-        break
-
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        drone.turn_motor_off()
-        break
+    drone.turn_motor_on()
+    time.sleep(10)
+    drone.send_command_without_return('streamoff')
+    drone.turn_motor_off()
+except Exception as exc:
+    print(type(exc))
+    print(exc.args)
+    drone.send_command_without_return('streamoff')
+    drone.turn_motor_off()
